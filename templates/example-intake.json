@@ -1,0 +1,32 @@
+{
+  "gene": "SCN2A",
+  "transcript": "NM_021007.3",
+  "genome_build": "GRCh38",
+  "c_hgvs": "c.4765A>G",
+  "p_hgvs": "p.Lys1589Glu",
+  "variant_type": "missense",
+  "inheritance_model": "autosomal_dominant",
+  "phenotype": "early infantile epileptic encephalopathy with developmental delay",
+  "family_structure": "trio",
+  "parental_genotypes": "proband heterozygous, both unaffected parents negative, parentage not confirmed",
+  "database_assertions": [],
+  "literature_evidence": [],
+  "functional_claim_needs_verification": true,
+  "de_novo_claim_needs_verification": true,
+  "clinvar_conflict": false,
+  "nearby_variant_reasoning": false,
+  "clinvar_result": {
+    "variation_id": 12345,
+    "clinical_significance": "Conflicting classifications of pathogenicity",
+    "review_status": "criteria provided, conflicting classifications",
+    "conditions": [
+      "Developmental and epileptic encephalopathy"
+    ]
+  },
+  "gnomad_result": {
+    "found": false,
+    "variant_id": "2-166166210-T-C",
+    "genome": null,
+    "exome": null
+  }
+}
