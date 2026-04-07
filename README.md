@@ -1,4 +1,4 @@
-# ACMG Variant Classification Skill
+# Hermes Agent: ACMG Variant Classification Skill
 
 Hermes Agent skill for structured ACMG/AMP germline small-variant classification.
 
