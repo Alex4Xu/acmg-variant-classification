@@ -1,7 +1,7 @@
 ---
 name: acmg-variant-classification
 description: Standard workflow for ACMG/AMP germline small-variant classification — collect evidence, route external databases in a fixed priority order, assign criteria, detect conflicts, and produce a review-ready classification summary.
-version: 0.3.0
+version: 0.3.1
 author: Hermes Agent
 license: MIT
 metadata:
@@ -33,6 +33,8 @@ This skill is **not** for:
 Always say clearly:
 - This is decision support, not a final clinical diagnosis.
 - Gene/disease-specific ClinGen guidance overrides generic ACMG rules where applicable.
+- Use ClinGen Variant Classification Guidance as the current hub for general and criteria-specific recommendations; the SVI WG itself was retired in April 2025.
+- ACMG/AMP/CAP/ClinGen SVC v4.0 is currently forthcoming/under development and should not be applied as current guidance until final release.
 - Final classification requires expert manual review.
 
 ## Inputs you should collect
@@ -300,9 +302,18 @@ Recommended sections:
 - `templates/example-intake.json` — runnable example record for router output
 - `references/test_cases.json` — sample logic tests
 
-## ClinGen SVI Updates (critical context for all criteria)
+## ClinGen Variant Classification Guidance / SVI Updates (critical context for all criteria)
 
-The ClinGen Sequence Variant Interpretation Working Group publishes authoritative refinements to the 2015 ACMG/AMP framework. These are now the standard of care. Key changes that affect daily classification:
+As of the 2026-04 wiki refresh, the current entry point is the **ClinGen Variant Classification Guidance** page. The ClinGen Sequence Variant Interpretation Working Group was retired in April 2025, but its recommendations remain the main body of refinements to the 2015 ACMG/AMP framework and are now surfaced through the guidance hub.
+
+Practical rule:
+1. Start with ACMG/AMP 2015.
+2. Check ClinGen CSpec / VCEP gene-disease specifications first.
+3. Use the ClinGen Variant Classification Guidance page as the current canonical index for general and criteria-specific recommendations.
+4. Treat older SVI WG pages as archival/source documents.
+5. Track ACMG/AMP/CAP/ClinGen SVC v4.0 as forthcoming only; do not apply it as current guidance until final release.
+
+Key changes that affect daily classification:
 
 **Point-based criteria** (replacing binary yes/no):
 - PS2/PM6 (de novo): see Step 5.5
