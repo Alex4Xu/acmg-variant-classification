@@ -37,9 +37,11 @@ LEDGER_TEMPLATE = [
     ("BP7", "Supporting"),
 ]
 
-# PP3/BP4 calibrated individual tool thresholds (Pejaver 2022, 2024)
-# Use ONE calibrated tool — no need for consensus across multiple tools.
-# If a VCEP specifies its own thresholds, those override these defaults.
+# PP3/BP4 calibrated individual tool thresholds. The entries below are examples
+# from ClinGen/Pejaver 2022-style calibration. Use ONE calibrated tool — no need
+# for consensus across multiple tools. If a VCEP specifies its own thresholds,
+# those override these defaults. Do not use tool-developer default cutoffs as
+# ACMG PP3/BP4 thresholds without calibration.
 CALIBRATED_TOOLS = {
     "REVEL": {
         "pp3": {"Supporting": 0.700, "Strong": 0.889},
@@ -57,14 +59,22 @@ CALIBRATED_TOOLS = {
         "pp3": {"Supporting": 25.3, "Strong": 28.5},
         "bp4": {"Supporting": 22.7, "Strong": 12.6},
     },
-    "AlphaMissense": {
-        "pp3": {"Supporting": 0.850},
-        "bp4": {"Supporting": 0.100},
-    },
     "PrimateAI": {
         "pp3": {"Supporting": 0.800, "Strong": 0.930},
         "bp4": {"Supporting": 0.200},
     },
+}
+
+
+# Newer computational tools such as AlphaMissense, ESM1b, and VARITY have later
+# ClinGen-associated calibration work (Bergquist/Stenton et al., 2025), but their
+# developer default cutoffs (e.g. AlphaMissense 0.85 / 0.1) should not be treated
+# as ACMG PP3/BP4 thresholds. Use published calibrated intervals, VCEP/CSpec
+# thresholds, or record them as contextual computational evidence only.
+EMERGING_CALIBRATED_TOOL_NOTES = {
+    "AlphaMissense": "Use later published calibrated intervals or VCEP/CSpec thresholds; do not use developer 0.85/0.1 cutoffs as ACMG thresholds.",
+    "ESM1b": "Use later published calibrated intervals or VCEP/CSpec thresholds.",
+    "VARITY_R": "Use later published calibrated intervals or VCEP/CSpec thresholds.",
 }
 
 # Criteria using point-based scoring (ClinGen SVI v1.1 and VCEP adaptations)

@@ -21,8 +21,8 @@
 | PM6 | Moderate | | No | | | Point-based (SVI v1.1): Supporting→Strong. Assumed parentage. |
 | PP1 | Supporting | | No | | | Bayesian LOD: ≥1.9 Supporting, ≥3.0 Moderate, ≥5.0 Strong, >5.0 Very Strong |
 | PP2 | Supporting | | No | | | |
-| PP3 | Supporting | | No | | | Calibrated individual tool (Pejaver 2022/2024). REVEL/BayesDel/CADD/AlphaMissense. |
-| PP4 | Supporting | | No | | | |
+| PP3 | Supporting | | No | | | Calibrated individual tool. REVEL/BayesDel/CADD use ClinGen/Pejaver-style thresholds; AlphaMissense requires later calibrated intervals or VCEP approval, not developer default cutoffs. |
+| PP4 | Supporting | | No | | | ClinGen 2023: phenotype specificity is coupled to PP1/BS4/locus evidence; avoid vague phenotype-only upgrading |
 | ~~PP5~~ | ~~Supporting~~ | | — | | | **DEPRECATED** (ClinGen SVI, ACGS 2023). Do not use. |
 | BA1 | Stand-alone | | No | | | **Disease-specific threshold** (SVI 2018). Use ClinGen BA1/BS1 calculator. |
 | BS1 | Strong | | No | | | **Disease-specific threshold** (SVI 2018). |
@@ -32,7 +32,7 @@
 | BP1 | Supporting | | No | | | |
 | BP2 | Supporting | | No | | | Point-based scoring for alternate molecular basis |
 | BP3 | Supporting | | No | | | |
-| BP4 | Supporting | | No | | | Calibrated individual tool (Pejaver 2022/2024). REVEL/BayesDel/CADD/AlphaMissense. |
+| BP4 | Supporting | | No | | | Calibrated individual tool. REVEL/BayesDel/CADD use ClinGen/Pejaver-style thresholds; AlphaMissense requires later calibrated intervals or VCEP approval, not developer default cutoffs. |
 | BP5 | Supporting | | No | | | Point-based scoring for alternate diagnosis |
 | ~~BP6~~ | ~~Supporting~~ | | — | | | **DEPRECATED** (ClinGen SVI, ACGS 2023). Do not use. |
 | BP7 | Supporting | | No | | | Splicing update 2023: synonymous with predicted splice impact ≠ automatic BP7 |

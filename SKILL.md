@@ -1,7 +1,7 @@
 ---
 name: acmg-variant-classification
 description: Standard workflow for ACMG/AMP germline small-variant classification — collect evidence, route external databases in a fixed priority order, assign criteria, detect conflicts, and produce a review-ready classification summary.
-version: 0.3.3
+version: 0.3.4
 author: Hermes Agent
 license: MIT
 metadata:
@@ -33,7 +33,7 @@ This skill is **not** for:
 Always say clearly:
 - This is decision support, not a final clinical diagnosis.
 - Gene/disease-specific ClinGen guidance overrides generic ACMG rules where applicable.
-- Use ClinGen Variant Classification Guidance as the current hub for general and criteria-specific recommendations; the SVI WG itself was retired in April 2025.
+- Use ClinGen Variant Classification Guidance as the current hub for general and criteria-specific recommendations; the SVI WG itself was retired in April 2025, and ClinGen asks users to use the Variant Classification Guidance hub as the current recommendation list as of July 2025.
 - ACMG/AMP/CAP/ClinGen SVC v4.0 is currently forthcoming/under development and should not be applied as current guidance until final release.
 - Final classification requires expert manual review.
 
@@ -204,11 +204,12 @@ Do not double count:
 - duplicated functional evidence
 - literature/database entries that cite the same underlying data
 
-**PP3/BP4 (computational evidence):** Use calibrated individual tool thresholds (Pejaver 2022/2024). One well-calibrated tool suffices — no consensus across multiple tools required. Recommended tools with published thresholds:
+**PP3/BP4 (computational evidence):** Use calibrated individual tool thresholds. One well-calibrated tool suffices — no consensus across multiple tools required. Recommended examples from the ClinGen/Pejaver 2022 calibration include:
 - REVEL: PP3 ≥0.7, BP4 ≤0.3
 - BayesDel_addAF: PP3 ≥0.34, BP4 ≤-0.36
 - CADD: PP3 ≥25.3, BP4 ≤22.7
-- AlphaMissense: PP3 ≥0.85, BP4 ≤0.1
+
+AlphaMissense, ESM1b, and VARITY were calibrated in later ClinGen-associated work (Bergquist/Stenton et al., Genetics in Medicine 2025), but **do not use the tool-developer default cutoffs** as ACMG PP3/BP4 thresholds. In particular, AlphaMissense 0.85 / 0.1 are developer-style pathogenic/benign cut points, not the Pejaver 2022 SVI thresholds. Use published calibrated intervals, a VCEP/CSpec threshold, or record the result as contextual computational evidence rather than triggering PP3/BP4.
 
 If a VCEP specifies its own thresholds, use those instead. Do not double-count multiple tools for the same PP3/BP4 application.
 
@@ -230,7 +231,7 @@ Apply these guardrails before final scoring:
 - **PVS1:** Do not apply at full Very Strong by default. Use the Abou Tayoun 2018 decision tree to determine applicable strength level (Very Strong/Strong/Moderate/Supporting). Consider: variant type → LOF mechanism → NMD eligibility → critical functional domain → rescue by alternative transcripts. Splice-altering variants confirmed by RNA evidence can reach PVS1_Strong (Walker 2023).
 - **BA1/BS1:** Do not use flat 5%/1% thresholds. Use **disease-specific thresholds** from ClinGen BA1/BS1 calculator based on prevalence, genetic heterogeneity, and penetrance. Check ClinGen BA1/BS1 exception list for special cases.
 - **PM2:** Default is **Supporting** (SVI 2020), not Moderate. Apply only when allele frequency is below the disease-specific maximum credible MAF. Some VCEPs may permit Moderate with additional justification.
-- **PP1/BS4 (co-segregation):** Use Bayesian LOD framework. Strength scales: LOD ≥1.9=Supporting, ≥3.0=Moderate, ≥5.0=Strong, >5.0=Very Strong. Adjust for reduced penetrance.
+- **PP1/BS4 and PP4:** Use the ClinGen 2023 guidance for co-segregation and phenotype specificity when possible. PP4 phenotype specificity is coupled to segregation/locus evidence and should not be treated as a free-standing upgrade from a vague phenotype match. Traditional Bayesian LOD thresholds remain useful for co-segregation notes (LOD ≥1.9=Supporting, ≥3.0=Moderate, ≥5.0=Strong, >5.0=Very Strong), but reduced penetrance, locus heterogeneity, inheritance model, and negative evidence at other loci must be considered.
 - **BS2/BP2/BP5:** Use point-based scoring (VCEP adaptations). BS2 requires phenotype context to avoid counting carriers as healthy observations.
 - If the exact variant lacks a functional assay, do not assign PS3 from experiments on nearby variants alone.
 - Nearby pathogenic in-frame variants in the same constrained / functionally critical region may support PM1 discussion, but not exact-variant equivalence.
@@ -311,7 +312,7 @@ Recommended sections:
 
 ## ClinGen Variant Classification Guidance / SVI Updates (critical context for all criteria)
 
-As of the 2026-04 wiki refresh, the current entry point is the **ClinGen Variant Classification Guidance** page. The ClinGen Sequence Variant Interpretation Working Group was retired in April 2025, but its recommendations remain the main body of refinements to the 2015 ACMG/AMP framework and are now surfaced through the guidance hub.
+As of the 2026-04 wiki refresh, the current entry point is the **ClinGen Variant Classification Guidance** page. The ClinGen Sequence Variant Interpretation Working Group was retired in April 2025; ClinGen states that as of July 2025 users should use the Variant Classification Guidance page as the current recommendation list. Archived SVI recommendations remain the main body of refinements to the 2015 ACMG/AMP framework and are now surfaced through the guidance hub.
 
 Practical rule:
 1. Start with ACMG/AMP 2015.
@@ -359,6 +360,12 @@ Key changes that affect daily classification:
 - PM3_Strong: 3+ observations with confirmed phase
 - Cannot apply PM3 and PS4 from the same case
 
+**PP1/BS4 and PP4 phenotype / segregation framework** (ClinGen guidance, Dec 2023):
+- Co-segregation (PP1/BS4) and phenotype specificity (PP4) should be evaluated as linked evidence types, not as independent automatic add-ons.
+- The guidance provides a points-based approach for using phenotype and co-segregation evidence to support or refute a locus within the Bayesian framework.
+- Negative evidence at one locus may constitute positive evidence for another locus in disorders with locus heterogeneity.
+- Adjust for reduced penetrance, autosomal-recessive and X-linked inheritance, and the distinction between disease-gene discovery evidence and variant pathogenicity evidence.
+
 **Code modification convention:** When modifying a criterion's strength per SVI, write the applied code as `PM2_Supporting` (not just "PM2 at Supporting"). ClinGen SVI recommends this convention for clarity in reports and databases.
 
 **Multi-disorder genes:** For genes associated with multiple phenotypes (e.g., GJB2 → deafness, skin disorders), evaluate each gene-disease pair separately. Classification may differ for the same variant across disease contexts.
@@ -375,7 +382,8 @@ Use references in this order when rules appear to conflict:
 2. ClinGen Variant Classification Guidance / archived SVI recommendations for individual ACMG/AMP criteria.
 3. ACMG/AMP 2015 Table 5 for default qualitative combination logic.
 4. Tavtigian et al. Bayesian / point framework as a quantitative consistency check and calibration aid.
-5. Software implementations (InterVar, VarSome, Franklin, Sherloc-style tools) as triage aids only unless the lab has formally adopted that framework.
+5. ACGS Best Practice Guidelines (2020/2023) as a useful UK laboratory-practice reference, especially for deprecated PP5/BP6 handling and rare-disease operational practice.
+6. Software implementations (InterVar, VarSome, Franklin, Sherloc-style tools) as triage aids only unless the lab has formally adopted that framework.
 
 Important combination note: `3 Moderate + 3 Supporting` is not a generic Pathogenic combination in ACMG/AMP 2015 and is also below the 10-point Pathogenic threshold in the Tavtigian point framework. Treat it as Likely Pathogenic by default.
 
@@ -489,7 +497,7 @@ PY
 - In guided case review, missing MRI/EEG should not block classification if the phenotype is still strongly gene-consistent, but it should be documented as a limitation on PP4 strength.
 - For quick gnomAD checks via GraphQL, query `https://gnomad.broadinstitute.org/api` with dataset values like `gnomad_r4`, `gnomad_r3`, or `gnomad_r2_1`; the `variant` query does not take a `referenceGenome` argument. A "Variant not found" response across releases is usable as absence evidence, but document the exact queried representation. Prefer v4 data when available.
 - For BA1/BS1 thresholds, always use the ClinGen BA1/BS1 calculator (https://clinicalgenome.org/tools/calculator-af/) or VCEP-specified thresholds. Never apply flat 5%/1% without confirming no disease-specific data exists.
-- For PP3/BP4, one calibrated tool is sufficient. REVEL ≥0.7/≤0.3 are the most widely adopted thresholds. If multiple tools disagree, document the discrepancy rather than counting each as independent evidence.
+- For PP3/BP4, one calibrated tool is sufficient. REVEL ≥0.7/≤0.3 are widely adopted ClinGen/Pejaver 2022 thresholds. AlphaMissense may be useful only with later calibrated intervals or VCEP approval; do not use the developer 0.85/0.1 cutoffs as ACMG thresholds. If multiple tools disagree, document the discrepancy rather than counting each as independent evidence.
 - For splice variants near canonical sites or deep intronic, use the SVI Splicing SG 2023 framework: combine in silico splice predictions with RNA evidence when available. Do not automatically apply BP7 to synonymous variants with predicted splice impact.
 
 ## Guided questioning pattern

@@ -4,7 +4,7 @@ A Hermes Agent skill for structured ACMG/AMP-style interpretation of germline sm
 
 This repository provides a reusable clinical-genetics workflow: normalize variant intake, collect evidence in a fixed source order, assign ACMG/AMP criteria with ClinGen refinements, detect conflicts, apply combination logic, and produce a review-ready summary.
 
-Version: 0.3.3
+Version: 0.3.4
 
 ## What this skill is for
 
@@ -30,7 +30,7 @@ This skill is not intended for:
 
 The workflow starts from the 2015 ACMG/AMP framework and incorporates major ClinGen refinements.
 
-Important v0.3.3 update:
+Important v0.3.4 update:
 
 - ClinGen Variant Classification Guidance is treated as the current hub for general and criteria-specific recommendations.
 - The ClinGen Sequence Variant Interpretation Working Group was retired in April 2025, but its recommendations remain important and are surfaced through the ClinGen guidance hub.
@@ -39,6 +39,8 @@ Important v0.3.3 update:
 - The default classifier follows ACMG/AMP 2015 Table 5 qualitative combinations.
 - `3 Moderate + 3 Supporting` is not a generic Pathogenic combination. Under the Tavtigian / ClinGen Bayesian point framework, it is 9 points and remains below the generic Pathogenic threshold; treat it as Likely Pathogenic unless a VCEP/CSpec or formally adopted lab framework says otherwise.
 - Empty intake placeholders no longer trigger literature deep dive by themselves; checked-but-empty or conflicting upstream sources do.
+- AlphaMissense developer default cutoffs are no longer listed as PP3/BP4 thresholds; use later calibrated intervals or VCEP/CSpec thresholds.
+- PP1/BS4 and PP4 now explicitly point to the ClinGen 2023 phenotype/segregation framework.
 
 Key refinements covered:
 

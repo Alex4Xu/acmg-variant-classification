@@ -45,3 +45,32 @@ Validation run:
 
 Notes:
 - This skill remains decision support only and does not replace expert clinical review, lab SOPs, or disease/gene-specific VCEP/CSpec guidance.
+
+
+## 2026-04-26 13:58 CST — v0.3.4 reviewer-feedback scientific refinements
+
+Backup before this round:
+- /home/nvidia/.hermes/skills/healthcare/acmg-variant-classification.backup.20260426_135806
+
+Reviewer feedback checked:
+- ClinGen SVI page confirms the SVI WG was retired in April 2025 and asks users, as of July 2025, to use the ClinGen Variant Classification Guidance hub.
+- ClinGen/Pejaver 2022 PP3/BP4 calibration does not include AlphaMissense developer thresholds. Later ClinGen-associated work in Genetics in Medicine 2025 calibrates AlphaMissense/ESM1b/VARITY, but developer defaults should not be used as ACMG PP3/BP4 thresholds.
+- ClinGen Dec 2023 guidance links PP1/BS4 co-segregation and PP4 phenotype specificity and provides a points-based framework.
+
+Files changed:
+- SKILL.md
+  - Version bumped to 0.3.4.
+  - Clarified SVI retirement vs July 2025 guidance-hub transition.
+  - Replaced AlphaMissense 0.85/0.1 as PP3/BP4 thresholds with a caution to use later calibrated intervals or VCEP/CSpec thresholds.
+  - Added ClinGen 2023 PP1/BS4 + PP4 phenotype/segregation framework notes.
+  - Added ACGS 2020/2023 to the authority hierarchy as a practice reference.
+- scripts/evidence_router.py
+  - Removed hard-coded AlphaMissense developer thresholds from CALIBRATED_TOOLS.
+  - Added EMERGING_CALIBRATED_TOOL_NOTES for AlphaMissense, ESM1b, and VARITY.
+- templates/evidence-table.md
+  - Updated PP3/BP4 caveat and PP4 caveat.
+
+Validation:
+- classifier reference cases: passed.
+- evidence_router example JSON: valid.
+- direct test module execution: tests/test_classifier.py and tests/test_evidence_router.py passed.
