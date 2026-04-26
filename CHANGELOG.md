@@ -74,3 +74,28 @@ Validation:
 - classifier reference cases: passed.
 - evidence_router example JSON: valid.
 - direct test module execution: tests/test_classifier.py and tests/test_evidence_router.py passed.
+
+
+## 2026-04-26 17:05 CST — v0.3.5 portability wording
+
+Backup before this round:
+- /home/nvidia/.hermes/skills/healthcare/acmg-variant-classification.backup.20260426_170556
+
+Rationale:
+- The workflow is packaged as a Hermes Agent skill, but should be broadly reusable by other agents, CLI scripts, notebooks, LIMS/case-management systems, and human SOPs.
+- Reduce unnecessary Hermes-specific wording and document portable usage modes.
+
+Files changed:
+- SKILL.md
+  - Version bumped to 0.3.5.
+  - Added portability note near the introduction.
+  - Added "Portable usage outside Hermes" section.
+  - Marked Python helper scripts as plain Python with no Hermes dependency.
+  - Reworded several "skill" references to "workflow" where the clinical method, not the Hermes package, is meant.
+- README.md
+  - Updated in the GitHub repository to present the project as a portable ACMG/AMP workflow that is Hermes-compatible rather than Hermes-dependent.
+
+Validation:
+- classifier reference cases: passed.
+- evidence_router example JSON: valid.
+- direct test module execution: tests/test_classifier.py and tests/test_evidence_router.py passed.

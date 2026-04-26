@@ -1,7 +1,7 @@
 ---
 name: acmg-variant-classification
 description: Standard workflow for ACMG/AMP germline small-variant classification — collect evidence, route external databases in a fixed priority order, assign criteria, detect conflicts, and produce a review-ready classification summary.
-version: 0.3.4
+version: 0.3.5
 author: Hermes Agent
 license: MIT
 metadata:
@@ -14,15 +14,17 @@ prerequisites:
 
 # ACMG Variant Classification
 
-Use this skill when a user wants a structured ACMG/AMP-style interpretation workflow for a **germline SNV/indel**.
+Use this workflow when a user wants a structured ACMG/AMP-style interpretation process for a **germline SNV/indel**.
 
-This skill is for:
+Portability note: this repository is packaged as a Hermes Agent skill, but the clinical workflow is intentionally agent-agnostic. The Markdown templates, Python helper scripts, evidence-routing rules, and SOP can be used by other AI agents, command-line workflows, notebooks, or human laboratory SOPs without Hermes-specific runtime assumptions.
+
+This workflow is for:
 - Standardizing intake
 - Preventing skipped evidence categories
 - Applying combination logic consistently
 - Producing a review-ready summary
 
-This skill is **not** for:
+This workflow is **not** for:
 - CNV/SV classification
 - Somatic oncology interpretation
 - Mitochondrial variant interpretation
@@ -39,7 +41,7 @@ Always say clearly:
 
 ## Inputs you should collect
 
-Use `templates/intake.md` and ask for or normalize these fields:
+Use `templates/intake.md` (or copy the same fields into any case-management system) and ask for or normalize these fields:
 - Gene
 - Transcript
 - Genome build
@@ -61,7 +63,7 @@ If transcript, genome build, or HGVS is unclear, stop and ask for clarification 
 
 Default to a guided interview workflow.
 
-When using this skill with a live user:
+When using this workflow with a live user:
 1. Ask for one block of information at a time
 2. Wait for the user's answer before moving on
 3. Do not request all evidence at once unless the user asks for a bulk template
@@ -119,7 +121,7 @@ Priority order:
 
 ### Programmatic hinting
 
-Use `scripts/evidence_router.py` to convert a normalized intake record into:
+Use `scripts/evidence_router.py` directly, or reproduce the same logic in another agent/platform, to convert a normalized intake record into:
 - required source order
 - blockers that prevent confident scoring
 - candidate criteria needing outside evidence
@@ -305,10 +307,20 @@ Recommended sections:
 - `templates/external-evidence-checklist.md` — fixed source-order worksheet for outside evidence
 - `templates/report_cn.md` — Chinese report skeleton for case delivery
 - `references/sop.md` — process-control SOP; technical criteria remain in SKILL.md
-- `scripts/classifier.py` — minimal ACMG combination engine
-- `scripts/evidence_router.py` — heuristic router for source priority, blockers, ClinVar/gnomAD normalization, and candidate ledger drafting
+- `scripts/classifier.py` — minimal ACMG combination engine; plain Python, no Hermes dependency
+- `scripts/evidence_router.py` — heuristic router for source priority, blockers, ClinVar/gnomAD normalization, and candidate ledger drafting; plain Python, no Hermes dependency
 - `templates/example-intake.json` — runnable example record for router output
 - `references/test_cases.json` — sample logic tests
+
+## Portable usage outside Hermes
+
+This workflow can be reused in four modes:
+1. **Human SOP mode:** copy the intake, checklist, evidence table, and report templates into a lab document-control system; use SKILL.md as the technical reference.
+2. **CLI mode:** run `python3 scripts/classifier.py references/test_cases.json` and `python3 scripts/evidence_router.py templates/example-intake.json` from any checkout with Python 3.
+3. **Other-agent mode:** give another AI agent SKILL.md plus the relevant templates/scripts; instruct it to preserve the authority hierarchy, evidence-source order, and decision-support disclaimers.
+4. **Integration mode:** import or reimplement `classify()` and the router functions in an LIMS, notebook, or curation dashboard; keep the local evidence ledger as the source of truth.
+
+Avoid hard-coding Hermes-specific paths in downstream integrations. Treat `~/.hermes/skills/...` as only one installation location; a normal repository checkout should work the same way.
 
 ## ClinGen Variant Classification Guidance / SVI Updates (critical context for all criteria)
 
@@ -408,7 +420,7 @@ If producing a PDF locally, keep the Markdown report as the source of truth and 
 
 ## Maintenance / review workflow
 
-When the user provides an external review or critique of this skill, do not immediately edit files unless the user explicitly asks to continue/implement. Use this sequence:
+When the user provides an external review or critique of this workflow, do not immediately edit files unless the user explicitly asks to continue/implement. Use this sequence:
 1. Triage each proposed change as: clinical-safety bug, code-quality bug, documentation clarification, test-coverage gap, or design preference.
 2. For clinical rules, verify against the authority hierarchy above before accepting the change. Do not rely on ACMG/AMP 2015 alone when later ClinGen/VCEP/SVI guidance may apply; also do not treat software behavior as authority unless the lab formally adopts that framework.
 3. Present the proposed accept/reject/defer list to the user and wait for permission before modifying files.
@@ -430,7 +442,7 @@ python3 ~/.hermes/skills/healthcare/acmg-variant-classification/scripts/evidence
 
 Expect the classifier tests to pass and the router to emit both a structured source-order summary and a candidate evidence ledger draft.
 
-When modifying the skill itself, also run the router unit tests. If `pytest` is unavailable in the current Hermes environment, load the test module directly and execute all `test_*` functions:
+When modifying this workflow, also run the router unit tests. If `pytest` is unavailable in the current Hermes environment, load the test module directly and execute all `test_*` functions:
 
 ```bash
 python3 - <<'PY'
@@ -526,4 +538,4 @@ Ask for clarification if any of these are missing:
 
 ## Reminder
 
-This skill helps structure ACMG reasoning. It does not replace clinical-grade review, lab SOPs, or disease-specific expert specifications.
+This workflow helps structure ACMG reasoning. It does not replace clinical-grade review, lab SOPs, or disease-specific expert specifications. It is Hermes-compatible but not Hermes-dependent.
