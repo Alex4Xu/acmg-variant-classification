@@ -1,10 +1,10 @@
 # ACMG Variant Classification Workflow
 
-A portable, Hermes-compatible workflow for structured ACMG/AMP-style interpretation of germline small variants (SNVs/indels).
+A portable workflow for structured ACMG/AMP-style interpretation of germline small variants (SNVs/indels).
 
-This repository provides a reusable clinical-genetics workflow: normalize variant intake, collect evidence in a fixed source order, assign ACMG/AMP criteria with ClinGen refinements, detect conflicts, apply combination logic, and produce a review-ready summary. It is packaged for Hermes Agent but is intentionally usable from plain CLI, other AI agents, notebooks, LIMS/case-management systems, or human SOPs.
+This repository provides a reusable clinical-genetics workflow: normalize variant intake, collect evidence in a fixed source order, assign ACMG/AMP criteria with ClinGen refinements, detect conflicts, apply combination logic, and produce a review-ready summary. It is intentionally usable from plain CLI, AI agents, notebooks, LIMS/case-management systems, or human SOPs.
 
-Version: 0.3.5
+Version: 0.3.6
 
 ## What this skill is for
 
@@ -30,7 +30,7 @@ This skill is not intended for:
 
 The workflow starts from the 2015 ACMG/AMP framework and incorporates major ClinGen refinements.
 
-Important v0.3.5 update:
+Important v0.3.6 update:
 
 - ClinGen Variant Classification Guidance is treated as the current hub for general and criteria-specific recommendations.
 - The ClinGen Sequence Variant Interpretation Working Group was retired in April 2025, but its recommendations remain important and are surfaced through the ClinGen guidance hub.
@@ -41,7 +41,7 @@ Important v0.3.5 update:
 - Empty intake placeholders no longer trigger literature deep dive by themselves; checked-but-empty or conflicting upstream sources do.
 - AlphaMissense developer default cutoffs are no longer listed as PP3/BP4 thresholds; use later calibrated intervals or VCEP/CSpec thresholds.
 - PP1/BS4 and PP4 now explicitly point to the ClinGen 2023 phenotype/segregation framework.
-- Documentation now emphasizes portability: Hermes-compatible, not Hermes-dependent.
+- Documentation now uses neutral platform-agnostic wording without over-explaining runtime independence.
 
 Key refinements covered:
 
@@ -61,13 +61,13 @@ Key refinements covered:
 
 ```text
 SKILL.md
-  Full workflow definition and step-by-step ACMG/AMP technical reference. Hermes-compatible, but readable as a standalone SOP.
+  Full workflow definition and step-by-step ACMG/AMP technical reference; readable as a standalone SOP.
 
 scripts/classifier.py
-  Minimal ACMG/AMP combination logic engine. Plain Python; no Hermes dependency.
+  Minimal ACMG/AMP combination logic engine. Plain Python.
 
 scripts/evidence_router.py
-  Heuristic source-priority router. Plain Python; no Hermes dependency. It does not classify the variant; it recommends evidence-gathering order and drafts a candidate ledger.
+  Heuristic source-priority router. Plain Python. It does not classify the variant; it recommends evidence-gathering order and drafts a candidate ledger.
 
 templates/intake.md
   Structured case intake form.
@@ -200,20 +200,8 @@ This project can be used in several environments:
 3. Other-agent mode: give another AI agent SKILL.md plus the relevant templates/scripts; preserve the authority hierarchy, evidence-source order, and decision-support disclaimers.
 4. Integration mode: import or reimplement `classify()` and the router functions in an LIMS, notebook, or curation dashboard; keep the local evidence ledger as the source of truth.
 
-Avoid hard-coding Hermes-specific paths. A normal repository checkout should work the same way as a Hermes skill installation.
+Avoid hard-coding installation-specific paths. A normal repository checkout should work as the default layout.
 
-## Install as a Hermes skill
-
-If this repository is cloned locally, you can optionally use it as a Hermes skill by placing or symlinking it under your Hermes skills directory.
-
-Example:
-
-```bash
-mkdir -p ~/.hermes/skills/healthcare
-ln -s /path/to/acmg-variant-classification ~/.hermes/skills/healthcare/acmg-variant-classification
-```
-
-Then load it in Hermes when doing ACMG/AMP case work. This is optional; the workflow also works directly from the repository checkout.
 
 ## Safety and clinical limitations
 

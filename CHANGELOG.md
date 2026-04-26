@@ -3,7 +3,7 @@
 ## 2026-04-26 13:45 CST — v0.3.3 clinical-safety hardening
 
 Backup before this round:
-- /home/nvidia/.hermes/skills/healthcare/acmg-variant-classification.backup.20260426_134310
+- Local backup created before edit
 
 Main rationale:
 - Keep default combination logic aligned with ACMG/AMP 2015 Table 5.
@@ -50,7 +50,7 @@ Notes:
 ## 2026-04-26 13:58 CST — v0.3.4 reviewer-feedback scientific refinements
 
 Backup before this round:
-- /home/nvidia/.hermes/skills/healthcare/acmg-variant-classification.backup.20260426_135806
+- Local backup created before edit
 
 Reviewer feedback checked:
 - ClinGen SVI page confirms the SVI WG was retired in April 2025 and asks users, as of July 2025, to use the ClinGen Variant Classification Guidance hub.
@@ -79,21 +79,43 @@ Validation:
 ## 2026-04-26 17:05 CST — v0.3.5 portability wording
 
 Backup before this round:
-- /home/nvidia/.hermes/skills/healthcare/acmg-variant-classification.backup.20260426_170556
+- Local backup created before edit
 
 Rationale:
-- The workflow is packaged as a Hermes Agent skill, but should be broadly reusable by other agents, CLI scripts, notebooks, LIMS/case-management systems, and human SOPs.
-- Reduce unnecessary Hermes-specific wording and document portable usage modes.
+- The workflow should be broadly reusable by agents, CLI scripts, notebooks, LIMS/case-management systems, and human SOPs.
+- Reduce runtime-specific wording and document portable usage modes.
 
 Files changed:
 - SKILL.md
   - Version bumped to 0.3.5.
   - Added portability note near the introduction.
-  - Added "Portable usage outside Hermes" section.
-  - Marked Python helper scripts as plain Python with no Hermes dependency.
-  - Reworded several "skill" references to "workflow" where the clinical method, not the Hermes package, is meant.
+  - Added "Portable usage" section.
+  - Marked Python helper scripts as plain Python.
+  - Reworded several "skill" references to "workflow" where the clinical method is meant.
 - README.md
-  - Updated in the GitHub repository to present the project as a portable ACMG/AMP workflow that is Hermes-compatible rather than Hermes-dependent.
+  - Updated in the GitHub repository to present the project as a portable ACMG/AMP workflow.
+
+Validation:
+- classifier reference cases: passed.
+- evidence_router example JSON: valid.
+- direct test module execution: tests/test_classifier.py and tests/test_evidence_router.py passed.
+
+
+## 2026-04-26 17:12 CST — v0.3.6 neutral platform wording
+
+Backup before this round:
+- Local backup created before edit
+
+Rationale:
+- Avoid over-explaining platform independence. The documentation should read naturally as a generic ACMG/AMP workflow rather than repeatedly emphasizing any one runtime.
+
+Files changed:
+- SKILL.md
+  - Version bumped to 0.3.6.
+  - Replaced explicit platform-brand wording with neutral platform-agnostic language.
+  - Replaced absolute installation-path validation examples with repository-relative commands.
+- README.md
+  - Updated in the GitHub repository with the same neutral wording.
 
 Validation:
 - classifier reference cases: passed.

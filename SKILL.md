@@ -1,13 +1,11 @@
 ---
 name: acmg-variant-classification
 description: Standard workflow for ACMG/AMP germline small-variant classification — collect evidence, route external databases in a fixed priority order, assign criteria, detect conflicts, and produce a review-ready classification summary.
-version: 0.3.5
-author: Hermes Agent
+version: 0.3.6
+author: Alex4Xu and contributors
 license: MIT
-metadata:
-  hermes:
-    tags: [acmg, clinvar, genomics, variant-classification, clinical-genetics]
-    caution: This skill is a decision-support workflow only and does not replace expert clinical review.
+tags: [acmg, clinvar, genomics, variant-classification, clinical-genetics]
+caution: This workflow is decision support only and does not replace expert clinical review.
 prerequisites:
   commands: [python3]
 ---
@@ -16,7 +14,7 @@ prerequisites:
 
 Use this workflow when a user wants a structured ACMG/AMP-style interpretation process for a **germline SNV/indel**.
 
-Portability note: this repository is packaged as a Hermes Agent skill, but the clinical workflow is intentionally agent-agnostic. The Markdown templates, Python helper scripts, evidence-routing rules, and SOP can be used by other AI agents, command-line workflows, notebooks, or human laboratory SOPs without Hermes-specific runtime assumptions.
+The workflow is intentionally platform-agnostic. The Markdown templates, Python helper scripts, evidence-routing rules, and SOP can be used by AI agents, command-line workflows, notebooks, curation dashboards, or human laboratory SOPs.
 
 This workflow is for:
 - Standardizing intake
@@ -307,12 +305,12 @@ Recommended sections:
 - `templates/external-evidence-checklist.md` — fixed source-order worksheet for outside evidence
 - `templates/report_cn.md` — Chinese report skeleton for case delivery
 - `references/sop.md` — process-control SOP; technical criteria remain in SKILL.md
-- `scripts/classifier.py` — minimal ACMG combination engine; plain Python, no Hermes dependency
-- `scripts/evidence_router.py` — heuristic router for source priority, blockers, ClinVar/gnomAD normalization, and candidate ledger drafting; plain Python, no Hermes dependency
+- `scripts/classifier.py` — minimal ACMG combination engine; plain Python
+- `scripts/evidence_router.py` — heuristic router for source priority, blockers, ClinVar/gnomAD normalization, and candidate ledger drafting; plain Python
 - `templates/example-intake.json` — runnable example record for router output
 - `references/test_cases.json` — sample logic tests
 
-## Portable usage outside Hermes
+## Portable usage
 
 This workflow can be reused in four modes:
 1. **Human SOP mode:** copy the intake, checklist, evidence table, and report templates into a lab document-control system; use SKILL.md as the technical reference.
@@ -320,7 +318,7 @@ This workflow can be reused in four modes:
 3. **Other-agent mode:** give another AI agent SKILL.md plus the relevant templates/scripts; instruct it to preserve the authority hierarchy, evidence-source order, and decision-support disclaimers.
 4. **Integration mode:** import or reimplement `classify()` and the router functions in an LIMS, notebook, or curation dashboard; keep the local evidence ledger as the source of truth.
 
-Avoid hard-coding Hermes-specific paths in downstream integrations. Treat `~/.hermes/skills/...` as only one installation location; a normal repository checkout should work the same way.
+Avoid hard-coding installation-specific paths in downstream integrations. A normal repository checkout should work as the default layout.
 
 ## ClinGen Variant Classification Guidance / SVI Updates (critical context for all criteria)
 
@@ -433,22 +431,19 @@ When the user provides an external review or critique of this workflow, do not i
 Run:
 
 ```bash
-python3 ~/.hermes/skills/healthcare/acmg-variant-classification/scripts/classifier.py \
-  ~/.hermes/skills/healthcare/acmg-variant-classification/references/test_cases.json
-
-python3 ~/.hermes/skills/healthcare/acmg-variant-classification/scripts/evidence_router.py \
-  ~/.hermes/skills/healthcare/acmg-variant-classification/templates/example-intake.json
+python3 scripts/classifier.py references/test_cases.json
+python3 scripts/evidence_router.py templates/example-intake.json
 ```
 
 Expect the classifier tests to pass and the router to emit both a structured source-order summary and a candidate evidence ledger draft.
 
-When modifying this workflow, also run the router unit tests. If `pytest` is unavailable in the current Hermes environment, load the test module directly and execute all `test_*` functions:
+When modifying this workflow, also run the router unit tests. If `pytest` is unavailable, load the test module directly and execute all `test_*` functions:
 
 ```bash
 python3 - <<'PY'
 import importlib.util
 from pathlib import Path
-p = Path('~/.hermes/skills/healthcare/acmg-variant-classification/tests/test_evidence_router.py').expanduser()
+p = Path('tests/test_evidence_router.py')
 spec = importlib.util.spec_from_file_location('test_evidence_router', p)
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
@@ -466,7 +461,7 @@ Also run classifier edge-case tests when present:
 python3 - <<'PY'
 import importlib.util
 from pathlib import Path
-p = Path('~/.hermes/skills/healthcare/acmg-variant-classification/tests/test_classifier.py').expanduser()
+p = Path('tests/test_classifier.py')
 spec = importlib.util.spec_from_file_location('test_classifier', p)
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
@@ -538,4 +533,4 @@ Ask for clarification if any of these are missing:
 
 ## Reminder
 
-This workflow helps structure ACMG reasoning. It does not replace clinical-grade review, lab SOPs, or disease-specific expert specifications. It is Hermes-compatible but not Hermes-dependent.
+This workflow helps structure ACMG reasoning. It does not replace clinical-grade review, lab SOPs, or disease-specific expert specifications.
