@@ -2,49 +2,222 @@
   {
     "id": "case_benign_ba1",
     "description": "High population frequency alone triggers BA1",
-    "pathogenic": {"very_strong": 0, "strong": 0, "moderate": 0, "supporting": 0},
-    "benign": {"standalone": 1, "strong": 0, "supporting": 0},
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 0,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 1,
+      "strong": 0,
+      "supporting": 0
+    },
     "conflict": false,
     "expected": "Benign"
   },
   {
     "id": "case_likely_pathogenic_pvs1_pm2",
     "description": "Predicted LoF with rarity",
-    "pathogenic": {"very_strong": 1, "strong": 0, "moderate": 1, "supporting": 0},
-    "benign": {"standalone": 0, "strong": 0, "supporting": 0},
+    "pathogenic": {
+      "very_strong": 1,
+      "strong": 0,
+      "moderate": 1,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
     "conflict": false,
     "expected": "Likely Pathogenic"
   },
   {
     "id": "case_pathogenic_pvs1_ps3",
     "description": "Very strong LoF plus strong functional evidence",
-    "pathogenic": {"very_strong": 1, "strong": 1, "moderate": 0, "supporting": 0},
-    "benign": {"standalone": 0, "strong": 0, "supporting": 0},
+    "pathogenic": {
+      "very_strong": 1,
+      "strong": 1,
+      "moderate": 0,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
     "conflict": false,
     "expected": "Pathogenic"
   },
   {
     "id": "case_likely_pathogenic_ps1_pm1_pm2_pp3",
     "description": "Known amino-acid change plus hotspot, rarity, computational support",
-    "pathogenic": {"very_strong": 0, "strong": 1, "moderate": 2, "supporting": 1},
-    "benign": {"standalone": 0, "strong": 0, "supporting": 0},
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 1,
+      "moderate": 2,
+      "supporting": 1
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
     "conflict": false,
     "expected": "Likely Pathogenic"
   },
   {
     "id": "case_likely_benign_bs1_bp4",
     "description": "Frequency too high for disease plus benign computational evidence",
-    "pathogenic": {"very_strong": 0, "strong": 0, "moderate": 0, "supporting": 0},
-    "benign": {"standalone": 0, "strong": 1, "supporting": 1},
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 0,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 1,
+      "supporting": 1
+    },
     "conflict": false,
     "expected": "Likely Benign"
   },
   {
     "id": "case_vus_conflict",
     "description": "Pathogenic and benign evidence conflict and remain unresolved",
-    "pathogenic": {"very_strong": 0, "strong": 1, "moderate": 0, "supporting": 0},
-    "benign": {"standalone": 0, "strong": 1, "supporting": 0},
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 1,
+      "moderate": 0,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 1,
+      "supporting": 0
+    },
     "conflict": true,
+    "expected": "VUS"
+  },
+  {
+    "id": "case_likely_pathogenic_3m_alone",
+    "description": "3 Moderate criteria alone triggers Likely Pathogenic, not Pathogenic",
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 3,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
+    "expected": "Likely Pathogenic"
+  },
+  {
+    "id": "case_likely_pathogenic_2m_2p",
+    "description": "2 Moderate plus 2 Supporting triggers Likely Pathogenic",
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 2,
+      "supporting": 2
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
+    "expected": "Likely Pathogenic"
+  },
+  {
+    "id": "case_likely_pathogenic_1m_4p",
+    "description": "1 Moderate plus 4 Supporting triggers Likely Pathogenic",
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 1,
+      "supporting": 4
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
+    "expected": "Likely Pathogenic"
+  },
+  {
+    "id": "case_likely_pathogenic_1s_2p",
+    "description": "1 Strong plus 2 Supporting triggers Likely Pathogenic",
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 1,
+      "moderate": 0,
+      "supporting": 2
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
+    "expected": "Likely Pathogenic"
+  },
+  {
+    "id": "case_vus_pvs1_1p_below_threshold",
+    "description": "PVS1 plus 1 Supporting is below Likely Pathogenic threshold",
+    "pathogenic": {
+      "very_strong": 1,
+      "strong": 0,
+      "moderate": 0,
+      "supporting": 1
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
+    "expected": "VUS"
+  },
+  {
+    "id": "case_likely_pathogenic_3m_3p_acmg2015",
+    "description": "3 Moderate plus 3 Supporting is Likely Pathogenic under ACMG 2015 original combination logic; no standalone 3M+3P Pathogenic upgrade",
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 3,
+      "supporting": 3
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
+    "expected": "Likely Pathogenic"
+  },
+  {
+    "id": "case_vus_empty_evidence",
+    "description": "No evidence remains VUS",
+    "pathogenic": {
+      "very_strong": 0,
+      "strong": 0,
+      "moderate": 0,
+      "supporting": 0
+    },
+    "benign": {
+      "standalone": 0,
+      "strong": 0,
+      "supporting": 0
+    },
+    "conflict": false,
     "expected": "VUS"
   }
 ]

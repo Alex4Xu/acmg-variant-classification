@@ -13,7 +13,7 @@
   "literature_evidence": [],
   "functional_claim_needs_verification": true,
   "de_novo_claim_needs_verification": true,
-  "clinvar_conflict": false,
+  "clinvar_conflict": true,
   "nearby_variant_reasoning": false,
   "clinvar_result": {
     "variation_id": 12345,
@@ -28,5 +28,7 @@
     "variant_id": "2-166166210-T-C",
     "genome": null,
     "exome": null
-  }
+  },
+  "database_assertions_checked": true,
+  "literature_evidence_checked": false
 }

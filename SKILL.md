@@ -1,7 +1,7 @@
 ---
 name: acmg-variant-classification
 description: Standard workflow for ACMG/AMP germline small-variant classification — collect evidence, route external databases in a fixed priority order, assign criteria, detect conflicts, and produce a review-ready classification summary.
-version: 0.3.1
+version: 0.3.3
 author: Hermes Agent
 license: MIT
 metadata:
@@ -179,7 +179,7 @@ Pathogenic side:
 - PVS1 (variable: Very Strong → Supporting per decision tree)
 - PS1, PS2 (point-based), PS3 (capped at Moderate without validated assay), PS4 (point-based)
 - PM1, PM2 (**default Supporting** — SVI 2020), PM3 (variable: Supporting→Strong), PM4, PM5, PM6 (point-based)
-- PP1 (Bayesian LOD), PP2, PP3 (calibrated individual tool), PP4
+- PP1 (Bayesian LOD: LOD ≥1.9 Supporting, ≥3.0 Moderate, ≥5.0 Strong, >5.0 Very Strong), PP2, PP3 (calibrated individual tool), PP4
 
 Benign side:
 - BA1 (**disease-specific threshold** — SVI 2018)
@@ -220,6 +220,8 @@ If both pathogenic and benign evidence exist:
 3. If conflict remains unresolved, prefer VUS over forced certainty
 4. State what additional data could resolve the conflict
 
+Implementation note: `scripts/classifier.py` treats `conflict=True` as a conservative manual-review flag. Set it only after confirming that pathogenic and benign evidence are both present, independent, and unresolved; do not use it as a raw "any P plus any B" detector.
+
 ### Step 5.5: Handle common evidence-substitution pitfalls
 
 Apply these guardrails before final scoring:
@@ -237,7 +239,13 @@ Apply these guardrails before final scoring:
 
 ### Step 6: Apply combination logic
 
-Use `scripts/classifier.py` or reproduce its logic manually.
+Use `scripts/classifier.py` or reproduce its logic manually. Applied strength modifiers count by their final strength bucket: for example, `PM3_Strong` counts as one Strong criterion, while `PM3_Supporting` counts as one Supporting criterion.
+
+Combination-source guardrail:
+- The default classifier follows ACMG/AMP 2015 Table 5 qualitative combinations.
+- Later ClinGen SVI work mainly refines individual criteria and strength calibration; it does not add a general ACMG/AMP rule that `3 Moderate + 3 Supporting` is Pathogenic.
+- Under the Tavtigian/ClinGen Bayesian point framework, Supporting=1, Moderate=2, Strong=4, Very Strong=8; Likely Pathogenic starts around 6 points and Pathogenic around 10 points. `3M + 3P = 9 points`, so it remains Likely Pathogenic unless a disease/gene-specific VCEP/CSpec or explicitly adopted lab framework says otherwise.
+- If using a non-default framework (Sherloc, InterVar-derived local logic, lab-specific Bayesian thresholds, or VCEP/CSpec-specific combining logic), document the source, version, and scope in the report before overriding this classifier.
 
 Pathogenic if any:
 - 1 Very Strong + >=1 Strong
@@ -248,7 +256,6 @@ Pathogenic if any:
 - 1 Strong + >=3 Moderate
 - 1 Strong + 2 Moderate + >=2 Supporting
 - 1 Strong + 1 Moderate + >=4 Supporting
-- >=3 Moderate + >=3 Supporting
 
 Likely Pathogenic if any:
 - 1 Very Strong + 1 Moderate
@@ -296,7 +303,7 @@ Recommended sections:
 - `templates/evidence-table.md` — criterion recording sheet
 - `templates/external-evidence-checklist.md` — fixed source-order worksheet for outside evidence
 - `templates/report_cn.md` — Chinese report skeleton for case delivery
-- `references/sop.md` — fuller SOP
+- `references/sop.md` — process-control SOP; technical criteria remain in SKILL.md
 - `scripts/classifier.py` — minimal ACMG combination engine
 - `scripts/evidence_router.py` — heuristic router for source priority, blockers, ClinVar/gnomAD normalization, and candidate ledger drafting
 - `templates/example-intake.json` — runnable example record for router output
@@ -360,6 +367,18 @@ Key changes that affect daily classification:
 
 **gnomAD:** Prefer v4 allele frequencies when available (more diverse populations). Use v4 as default for PM2/BA1/BS1 assessments.
 
+
+## Key references / authority hierarchy
+
+Use references in this order when rules appear to conflict:
+1. Disease/gene-specific ClinGen VCEP / CSpec guidance and documented local lab SOP.
+2. ClinGen Variant Classification Guidance / archived SVI recommendations for individual ACMG/AMP criteria.
+3. ACMG/AMP 2015 Table 5 for default qualitative combination logic.
+4. Tavtigian et al. Bayesian / point framework as a quantitative consistency check and calibration aid.
+5. Software implementations (InterVar, VarSome, Franklin, Sherloc-style tools) as triage aids only unless the lab has formally adopted that framework.
+
+Important combination note: `3 Moderate + 3 Supporting` is not a generic Pathogenic combination in ACMG/AMP 2015 and is also below the 10-point Pathogenic threshold in the Tavtigian point framework. Treat it as Likely Pathogenic by default.
+
 ## Optional deliverable workflow
 
 For real case work, prefer this output sequence:
@@ -379,6 +398,16 @@ For Chinese clinical-style output, write a concise report with these sections:
 
 If producing a PDF locally, keep the Markdown report as the source of truth and render the PDF from that report rather than maintaining two independent versions.
 
+## Maintenance / review workflow
+
+When the user provides an external review or critique of this skill, do not immediately edit files unless the user explicitly asks to continue/implement. Use this sequence:
+1. Triage each proposed change as: clinical-safety bug, code-quality bug, documentation clarification, test-coverage gap, or design preference.
+2. For clinical rules, verify against the authority hierarchy above before accepting the change. Do not rely on ACMG/AMP 2015 alone when later ClinGen/VCEP/SVI guidance may apply; also do not treat software behavior as authority unless the lab formally adopts that framework.
+3. Present the proposed accept/reject/defer list to the user and wait for permission before modifying files.
+4. Before editing, create a backup if the skill directory is not in a git repository.
+5. After editing, run classifier tests, router JSON smoke test, and direct `test_*` module execution if `pytest` is unavailable.
+6. Record the rationale, files changed, backup path, and validation results in `CHANGELOG.md`.
+
 ## Validation
 
 Run:
@@ -392,6 +421,40 @@ python3 ~/.hermes/skills/healthcare/acmg-variant-classification/scripts/evidence
 ```
 
 Expect the classifier tests to pass and the router to emit both a structured source-order summary and a candidate evidence ledger draft.
+
+When modifying the skill itself, also run the router unit tests. If `pytest` is unavailable in the current Hermes environment, load the test module directly and execute all `test_*` functions:
+
+```bash
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+p = Path('~/.hermes/skills/healthcare/acmg-variant-classification/tests/test_evidence_router.py').expanduser()
+spec = importlib.util.spec_from_file_location('test_evidence_router', p)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+for name in sorted(n for n in dir(m) if n.startswith('test_')):
+    getattr(m, name)()
+    print('PASS', name)
+PY
+```
+
+For literature routing regressions, explicitly test the distinction between empty unchecked intake placeholders and checked-but-empty sources: `database_assertions: []` / `literature_evidence: []` alone should not trigger a literature deep dive; an empty checked ClinVar result should.
+
+Also run classifier edge-case tests when present:
+
+```bash
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+p = Path('~/.hermes/skills/healthcare/acmg-variant-classification/tests/test_classifier.py').expanduser()
+spec = importlib.util.spec_from_file_location('test_classifier', p)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+for name in sorted(n for n in dir(m) if n.startswith('test_')):
+    getattr(m, name)()
+    print('PASS', name)
+PY
+```
 
 ## Common pitfalls
 

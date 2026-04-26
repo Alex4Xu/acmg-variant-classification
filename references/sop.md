@@ -1,6 +1,6 @@
 # ACMG Variant Classification SOP
 
-Purpose: provide a repeatable ACMG/AMP-based workflow for germline SNV/indel interpretation.
+Purpose: define lab process control for ACMG/AMP-based germline SNV/indel interpretation. Technical criterion details live in SKILL.md; this SOP focuses on intake, review, sign-off, archiving, and version control.
 
 ## Scope
 Use for:
@@ -28,7 +28,7 @@ Confirm:
 Collect variant identity, phenotype context, inheritance model, source list, and missing data.
 
 ### 2. Evidence gathering
-Review all ACMG evidence buckets, not only the obvious ones.
+Use SKILL.md as the technical evidence-gathering reference. This SOP requires documentation that all evidence buckets were considered, without duplicating the criterion-specific rules.
 
 ### 3. Criteria assignment
 For each criterion record:
@@ -45,7 +45,7 @@ If pathogenic and benign evidence coexist, prefer explicit conflict analysis ove
 Unresolved conflict should usually remain VUS.
 
 ### 6. Combination logic
-Use ACMG/AMP combination rules, ideally after manual confirmation of all triggered criteria.
+Use the current SKILL.md combination logic / classifier helper after manual confirmation of all triggered criteria. Record the SKILL.md version used.
 
 ### 7. Independent review
 Check especially:
@@ -55,12 +55,22 @@ Check especially:
 - improper PP3/BP4 inflation
 - unsupported ClinVar overreliance
 
-### 8. Archive
+### 8. Sign-off
+Require at least one qualified reviewer to confirm:
+- variant identity and transcript
+- gene-disease validity and inheritance model
+- VCEP/CSpec applicability
+- criteria independence / double-counting review
+- final classification and reclassification triggers
+
+### 9. Archive
 Store:
 - normalized variant description
 - evidence table
 - final logic summary
 - reviewer/date/version
+- SKILL.md version and any VCEP/CSpec version used
+- evidence source retrieval dates
 - reclassification triggers
 
 ## Minimum reportable output
@@ -70,3 +80,12 @@ Store:
 - Final provisional ACMG class
 - Review limitations
 - Reclassification triggers
+
+
+## Change-control rule
+When SKILL.md or helper scripts change, record:
+- date/time
+- files changed
+- clinical rationale
+- validation commands and results
+- backup path if no git repository is available

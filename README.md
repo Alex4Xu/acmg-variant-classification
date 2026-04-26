@@ -4,7 +4,7 @@ A Hermes Agent skill for structured ACMG/AMP-style interpretation of germline sm
 
 This repository provides a reusable clinical-genetics workflow: normalize variant intake, collect evidence in a fixed source order, assign ACMG/AMP criteria with ClinGen refinements, detect conflicts, apply combination logic, and produce a review-ready summary.
 
-Version: 0.3.1
+Version: 0.3.3
 
 ## What this skill is for
 
@@ -30,12 +30,15 @@ This skill is not intended for:
 
 The workflow starts from the 2015 ACMG/AMP framework and incorporates major ClinGen refinements.
 
-Important v0.3.1 update:
+Important v0.3.3 update:
 
 - ClinGen Variant Classification Guidance is treated as the current hub for general and criteria-specific recommendations.
 - The ClinGen Sequence Variant Interpretation Working Group was retired in April 2025, but its recommendations remain important and are surfaced through the ClinGen guidance hub.
 - Gene/disease-specific ClinGen VCEP or CSpec specifications override generic ACMG/AMP logic when available.
 - ACMG/AMP/CAP/ClinGen SVC v4.0 is currently considered forthcoming / under development and should not be applied as current guidance until final release.
+- The default classifier follows ACMG/AMP 2015 Table 5 qualitative combinations.
+- `3 Moderate + 3 Supporting` is not a generic Pathogenic combination. Under the Tavtigian / ClinGen Bayesian point framework, it is 9 points and remains below the generic Pathogenic threshold; treat it as Likely Pathogenic unless a VCEP/CSpec or formally adopted lab framework says otherwise.
+- Empty intake placeholders no longer trigger literature deep dive by themselves; checked-but-empty or conflicting upstream sources do.
 
 Key refinements covered:
 
@@ -86,6 +89,12 @@ references/test_cases.json
 
 tests/test_evidence_router.py
   Unit tests for the evidence router.
+
+tests/test_classifier.py
+  Unit tests for classifier edge cases and reference cases.
+
+CHANGELOG.md
+  Versioned change log and validation notes.
 ```
 
 ## Recommended workflow
@@ -138,20 +147,22 @@ python3 scripts/evidence_router.py templates/example-intake.json
 Expected classifier result:
 
 ```text
-passed: 6 / 6
+passed: 13 / 13
 ```
 
 If pytest is installed:
 
 ```bash
-python3 -m pytest -q tests/test_evidence_router.py
+python3 -m pytest -q tests/test_classifier.py tests/test_evidence_router.py
 ```
 
 Expected pytest result:
 
 ```text
-3 passed
+11 passed
 ```
+
+If pytest is unavailable, run the test modules directly as plain Python imports; the validation command is documented in SKILL.md.
 
 ## Example: evidence router
 

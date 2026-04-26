@@ -34,7 +34,6 @@ LEDGER_TEMPLATE = [
     ("BP3", "Supporting"),
     ("BP4", "Supporting"),         # Calibrated individual tools (Pejaver 2022/2024)
     ("BP5", "Supporting"),         # Point-based scoring
-    ("BP6", "Supporting"),         # DEPRECATED (ClinGen SVI, ACGS 2023)
     ("BP7", "Supporting"),
 ]
 
@@ -176,6 +175,56 @@ def as_float(value):
 
 
 
+def source_checked(record: dict, source_name: str, result_key: str | None = None) -> bool:
+    explicit_key = f"{source_name.lower()}_has_been_checked"
+    checked_key = f"{source_name.lower()}_checked"
+    if explicit_key in record:
+        return looks_true(record.get(explicit_key))
+    if checked_key in record:
+        return looks_true(record.get(checked_key))
+    return result_key is not None and record.get(result_key) is not None
+
+
+
+def literature_deep_dive_reasons(record: dict, context: dict, clinvar: dict | None = None) -> list[str]:
+    """Return literature escalation reasons after upstream source status is known.
+
+    Empty intake placeholders should not trigger a deep dive by themselves. Use explicit
+    *_checked flags, normalized ClinVar results, or source-verification flags to separate
+    "not yet searched" from "searched but absent/sparse/conflicting".
+    """
+    reasons = []
+    if not context.get("phenotype_present"):
+        reasons.append("phenotype_context_missing")
+
+    if clinvar is not None:
+        if clinvar.get("is_conflicted"):
+            reasons.append("clinvar_conflict_flagged")
+        if not clinvar.get("has_assertion") and source_checked(record, "clinvar", "clinvar_result"):
+            reasons.append("clinvar_absent_or_sparse_after_check")
+    elif looks_true(record.get("clinvar_conflict")):
+        reasons.append("clinvar_conflict_flagged")
+
+    if source_checked(record, "database_assertions") and not normalize_list(record.get("database_assertions")):
+        reasons.append("database_assertions_checked_but_empty")
+    if source_checked(record, "literature_evidence") and not normalize_list(record.get("literature_evidence")):
+        reasons.append("literature_checked_but_empty")
+
+    if looks_true(record.get("functional_claim_needs_verification")):
+        reasons.append("functional_claim_needs_source_check")
+    if looks_true(record.get("de_novo_claim_needs_verification")):
+        reasons.append("de_novo_claim_needs_source_check")
+    if looks_true(record.get("nearby_variant_reasoning")):
+        reasons.append("nearby_variant_or_regional_evidence_in_play")
+
+    deduped = []
+    for reason in reasons:
+        if reason not in deduped:
+            deduped.append(reason)
+    return deduped
+
+
+
 def summarize_variant_context(record: dict) -> dict:
     gene = first_nonempty(record, "gene")
     transcript = first_nonempty(record, "transcript")
@@ -209,21 +258,8 @@ def summarize_variant_context(record: dict) -> dict:
 
     source_order = ["ClinGen", "ClinVar", "gnomAD"]
 
-    literature_reasons = []
-    if not normalize_list(database_assertions):
-        literature_reasons.append("no_database_assertions_supplied")
-    if not normalize_list(literature_evidence):
-        literature_reasons.append("no_literature_evidence_supplied")
-    if not phenotype_present:
-        literature_reasons.append("phenotype_context_missing")
-    if looks_true(record.get("clinvar_conflict")):
-        literature_reasons.append("clinvar_conflict_flagged")
-    if looks_true(record.get("functional_claim_needs_verification")):
-        literature_reasons.append("functional_claim_needs_source_check")
-    if looks_true(record.get("de_novo_claim_needs_verification")):
-        literature_reasons.append("de_novo_claim_needs_source_check")
-    if looks_true(record.get("nearby_variant_reasoning")):
-        literature_reasons.append("nearby_variant_or_regional_evidence_in_play")
+    base_context = {"phenotype_present": phenotype_present}
+    literature_reasons = literature_deep_dive_reasons(record, base_context)
 
     need_literature_deep_dive = len(literature_reasons) > 0
     if need_literature_deep_dive:
@@ -515,6 +551,9 @@ def build_candidate_evidence_ledger(record: dict) -> dict:
                 caveat="BS1 threshold is disease-specific (SVI 2018). This uses bs1_threshold from record or generic fallback. Confirm with ClinGen calculator. Check disease prevalence and penetrance.",
             )
         elif gnomad["is_rare"]:
+            # is_rare uses a conservative 0.01% heuristic only to surface a PM2
+            # candidate row. Final PM2 application must use disease-specific maximum
+            # credible allele frequency from ClinGen calculator or VCEP guidance.
             add_or_replace_row(
                 rows,
                 code="PM2",
@@ -522,7 +561,7 @@ def build_candidate_evidence_ledger(record: dict) -> dict:
                 triggered="Candidate",
                 reason=f"Supplied gnomAD max AF is rare ({gnomad['max_af']:.6g}).",
                 source="gnomAD",
-                caveat="SVI 2020: PM2 defaults to Supporting. Apply only if AF is below disease-specific MAF threshold (use ClinGen calculator). Some VCEPs may permit Moderate with additional justification.",
+                caveat="Pre-screen only: the router's rare heuristic is max AF <0.01% or absent. Final PM2 requires disease-specific maximum credible allele frequency from ClinGen calculator or VCEP guidance. SVI 2020: PM2 defaults to Supporting; some VCEPs may permit Moderate with additional justification.",
             )
 
     if context["phenotype_present"]:
@@ -575,11 +614,7 @@ def build_router_summary(record: dict) -> dict:
     clinvar = normalize_clinvar_result(record.get("clinvar_result"))
     gnomad = normalize_gnomad_result(record.get("gnomad_result"))
 
-    literature_reasons = list(context["literature_deep_dive_reasons"])
-    if clinvar["is_conflicted"] and "clinvar_conflict_flagged" not in literature_reasons:
-        literature_reasons.append("clinvar_conflict_flagged")
-    if not clinvar["has_assertion"] and "no_database_assertions_supplied" not in literature_reasons:
-        literature_reasons.append("no_database_assertions_supplied")
+    literature_reasons = literature_deep_dive_reasons(record, context, clinvar)
 
     source_order = ["ClinGen", "ClinVar", "gnomAD"]
     need_literature_deep_dive = len(literature_reasons) > 0

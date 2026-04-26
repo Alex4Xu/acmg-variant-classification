@@ -4,6 +4,7 @@
 > **SVI 2018+:** BA1/BS1 use **disease-specific thresholds**, not flat 5%/1%.
 > **SVI v1.1:** PS2/PM6, PS4, BS2, BP2/BP5 use **point-based scoring** for variable strength.
 > **SVI 2022/2024:** PP3/BP4 use **calibrated individual tool thresholds** (one tool suffices).
+> **Framework:** Record VCEP/CSpec or local lab framework before overriding generic ACMG/AMP 2015 combination logic.
 
 | Code | Default Strength | Applied Strength | Triggered | Reason | Source | Caveat / limitation |
 |------|-----------------|-----------------|-----------|--------|--------|---------------------|
@@ -18,7 +19,7 @@
 | PM4 | Moderate | | No | | | |
 | PM5 | Moderate | | No | | | |
 | PM6 | Moderate | | No | | | Point-based (SVI v1.1): Supporting→Strong. Assumed parentage. |
-| PP1 | Supporting | | No | | | Bayesian LOD framework: Supporting→Very Strong |
+| PP1 | Supporting | | No | | | Bayesian LOD: ≥1.9 Supporting, ≥3.0 Moderate, ≥5.0 Strong, >5.0 Very Strong |
 | PP2 | Supporting | | No | | | |
 | PP3 | Supporting | | No | | | Calibrated individual tool (Pejaver 2022/2024). REVEL/BayesDel/CADD/AlphaMissense. |
 | PP4 | Supporting | | No | | | |
@@ -27,7 +28,7 @@
 | BS1 | Strong | | No | | | **Disease-specific threshold** (SVI 2018). |
 | BS2 | Strong | | No | | | Point-based for healthy observations. Requires phenotype context. |
 | BS3 | Strong | | No | | | Requires validated assay (SVI 2024) |
-| BS4 | Strong | | No | | | Bayesian LOD framework: Supporting→Very Strong |
+| BS4 | Strong | | No | | | Bayesian LOD: ≥1.9 Supporting, ≥3.0 Moderate, ≥5.0 Strong, >5.0 Very Strong |
 | BP1 | Supporting | | No | | | |
 | BP2 | Supporting | | No | | | Point-based scoring for alternate molecular basis |
 | BP3 | Supporting | | No | | | |
@@ -44,6 +45,11 @@ When a criterion's applied strength differs from its default (2015), record the 
 - **PS3**: If applying as Strong, document validated assay status; otherwise cap at Moderate
 - **PS2/PM6**: Record point calculation and final strength mapping
 - **PP1/BS4**: Record LOD score and strength mapping
+
+## Framework / source version
+- ACMG/AMP combination framework used: ACMG/AMP 2015 default / VCEP-CSpec / local lab framework / other:
+- VCEP/CSpec name and version/date, if any:
+- ClinGen guidance pages checked date:
 
 ## Summary counts
 - Pathogenic: VS= , S= , M= , P=

@@ -21,14 +21,14 @@
 
 ## Source worksheet
 
-| Source | Purpose | Checked? | Key finding | Review status / confidence | Caveat |
-|--------|---------|----------|-------------|----------------------------|--------|
-| ClinGen | Rule override / mechanism | No | | | |
-| ClinVar | Assertion context | No | | | |
-| gnomAD | Population evidence | No | | | |
-| Mastermind | Variant-level literature | No | | | |
-| PubTator3 / PubMed | Primary literature review | No | | | |
-| VarSome / Franklin | Aggregator summary only | No | | | |
+| Source | Purpose | Checked? | Search / access date | ClinGen VCEP/CSpec identifier if applicable | Key finding | Review status / confidence | Caveat |
+|--------|---------|----------|----------------------|--------------------------------------------|-------------|----------------------------|--------|
+| ClinGen | Rule override / mechanism | No | | | | | |
+| ClinVar | Assertion context | No | | | | | |
+| gnomAD | Population evidence | No | | | | | |
+| Mastermind | Variant-level literature | No | | | | | |
+| PubTator3 / PubMed | Primary literature review | No | | | | | |
+| VarSome / Franklin | Aggregator summary only | No | | | | | |
 
 ## Candidate ACMG criteria needing outside support
 - PVS1 review:

@@ -3,16 +3,26 @@ import sys
 from pathlib import Path
 
 
+def _non_negative_int(value, field: str) -> int:
+    if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+        raise ValueError(f"{field} must be a non-negative integer")
+    return value
+
+
 def classify(pathogenic: dict, benign: dict, conflict: bool = False) -> str:
-    pv = pathogenic.get("very_strong", 0)
-    ps = pathogenic.get("strong", 0)
-    pm = pathogenic.get("moderate", 0)
-    pp = pathogenic.get("supporting", 0)
+    pv = _non_negative_int(pathogenic.get("very_strong", 0), "pathogenic.very_strong")
+    ps = _non_negative_int(pathogenic.get("strong", 0), "pathogenic.strong")
+    pm = _non_negative_int(pathogenic.get("moderate", 0), "pathogenic.moderate")
+    pp = _non_negative_int(pathogenic.get("supporting", 0), "pathogenic.supporting")
 
-    ba = benign.get("standalone", 0)
-    bs = benign.get("strong", 0)
-    bp = benign.get("supporting", 0)
+    ba = _non_negative_int(benign.get("standalone", 0), "benign.standalone")
+    bs = _non_negative_int(benign.get("strong", 0), "benign.strong")
+    bp = _non_negative_int(benign.get("supporting", 0), "benign.supporting")
 
+    # Conservative implementation: caller should set conflict=True only after
+    # manual review confirms that pathogenic and benign evidence are both present,
+    # independent, and unresolved. ACMG requires evidence independence review; this
+    # shortcut intentionally prefers VUS over forced certainty for unresolved conflicts.
     if conflict and (pv or ps or pm or pp) and (ba or bs or bp):
         return "VUS"
 
@@ -30,7 +40,6 @@ def classify(pathogenic: dict, benign: dict, conflict: bool = False) -> str:
         or (ps >= 1 and pm >= 3)
         or (ps >= 1 and pm >= 2 and pp >= 2)
         or (ps >= 1 and pm >= 1 and pp >= 4)
-        or (pm >= 3 and pp >= 3)
     ):
         return "Pathogenic"
 
